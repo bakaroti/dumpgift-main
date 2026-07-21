@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#050505">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Happy Level-Up Day! 🏁</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Permanent+Marker&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --fuel-scale: 0.62;
+        }
+        @media (min-width: 380px) { :root { --fuel-scale: 0.8; } }
+        @media (min-width: 640px) { :root { --fuel-scale: 1; } }
+
+        html, body {
+            height: 100%;
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.06) 0%, transparent 50%);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-handwriting { font-family: 'Permanent Marker', cursive; }
+        .font-digital { font-family: 'Orbitron', sans-serif; }
+
+        .page {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            visibility: hidden; opacity: 0;
+            display: flex; flex-direction: column;
+        }
+
+        button, .polaroid, [role="button"] {
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+        }
+
+        button:focus-visible,
+        .polaroid:focus-visible,
+        [role="button"]:focus-visible {
+            outline: 2px solid #ef4444;
+            outline-offset: 3px;
+            border-radius: 6px;
+        }
+
+        .btn-neon {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .btn-neon:hover {
+                border-color: #ef4444;
+                box-shadow: 0 0 25px rgba(220, 38, 38, 0.5), inset 0 0 10px rgba(220, 38, 38, 0.2);
+                transform: translateY(-2px);
+                background: rgba(239, 68, 68, 0.08);
+            }
+        }
+        .btn-neon:active {
+            transform: scale(0.97);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+
+        .polaroid {
+            background: #0f0f0f; padding: 12px 12px 20px 12px;
+            border: 1px solid #1f1f1f; border-radius: 6px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .polaroid:hover {
+                transform: rotate(0deg) scale(1.04) translateY(-6px) !important;
+                border-color: #ef4444; box-shadow: 0 15px 35px rgba(220, 38, 38, 0.25);
+                z-index: 20;
+            }
+        }
+        .polaroid:active {
+            transform: scale(0.98) !important;
+        }
+
+        /* Reveal-on-view grayscale (replaces hover-only reveal so it works on tap/scroll too) */
+        .gallery-media {
+            filter: grayscale(1) brightness(0.85);
+            transition: filter 0.9s ease;
+        }
+        .polaroid.is-revealed .gallery-media {
+            filter: grayscale(0) brightness(1);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .polaroid:hover .gallery-media { filter: grayscale(0) brightness(1); }
+        }
+
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* --- DIGITAL DASHBOARD STYLING (VARIO 160) --- */
+        .honda-dash-shell {
+            background: linear-gradient(180deg, #111 0%, #050505 100%);
+            padding: 10px;
+            border-top: 2px solid #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.9), inset 0 2px 15px rgba(255,255,255,0.1);
+            clip-path: polygon(15% 0, 85% 0, 100% 35%, 95% 100%, 5% 100%, 0 35%);
+            position: relative;
+        }
+        
+        .lcd-screen {
+            background: #0f1c3f; 
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.8);
+            border: 2px solid #000;
+            position: relative;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            padding: clamp(10px, 4vw, 15px) clamp(12px, 6vw, 25px);
+            overflow: hidden;
+        }
+
+        .lcd-text { color: #e5e7eb; text-shadow: 0 0 5px rgba(229, 231, 235, 0.8); }
+        .lcd-text-dim { color: rgba(229, 231, 235, 0.1); }
+
+        /* Fluid speedometer digits: fits ~320px phones up through desktop without overflowing the LCD row */
+        .speedo-digits {
+            width: clamp(4.6rem, 30vw, 10.5rem);
+            font-size: clamp(2.5rem, 12vw, 6rem);
+        }
+        
+        .fuel-segment {
+            background: rgba(229, 231, 235, 0.15); 
+            height: 6px; 
+            margin-bottom: 2px;
+            transform: skewX(-15deg); 
+            transition: background 0.3s;
+        }
+        .fuel-segment.active { 
+            background: #e5e7eb; 
+            box-shadow: 0 0 6px rgba(229, 231, 235, 0.8); 
+        }
+
+        #fuel-8 { width: calc(32px * var(--fuel-scale)); }
+        #fuel-7 { width: calc(28px * var(--fuel-scale)); }
+        #fuel-6 { width: calc(25px * var(--fuel-scale)); }
+        #fuel-5 { width: calc(22px * var(--fuel-scale)); }
+        #fuel-4 { width: calc(19px * var(--fuel-scale)); }
+        #fuel-3 { width: calc(16px * var(--fuel-scale)); }
+        #fuel-2 { width: calc(13px * var(--fuel-scale)); }
+        #fuel-1 { width: calc(10px * var(--fuel-scale)); }
+
+        .indicator-icon { opacity: 0.15; transition: opacity 0.2s; }
+        .indicator-icon.on { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+        #speed-glow { transition: background-color 0.1s ease; }
+
+        .hardware-btn {
+            background: linear-gradient(180deg, #222 0%, #111 100%);
+            border: 1px solid #000;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.1), 0 5px 10px rgba(0,0,0,0.5);
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            transition: transform 0.1s ease;
+        }
+        .hardware-btn:active { transform: scale(0.94) translateY(1px); }
+
+        /* Speed line effects for the game screen */
+        .speed-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            height: 2px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Floating controls */
+        .floating-btn-tr {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 0px) + 14px);
+            right: calc(env(safe-area-inset-right, 0px) + 14px);
+            z-index: 90;
+        }
+        .floating-dots-tc {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 0px) + 20px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 90;
+        }
+
+        /* Lightbox nav */
+        .lightbox-safe-top-right { top: calc(env(safe-area-inset-top, 0px) + 1.1rem); right: calc(env(safe-area-inset-right, 0px) + 1.1rem); }
+        .lightbox-safe-top-left { top: calc(env(safe-area-inset-top, 0px) + 1.1rem); left: calc(env(safe-area-inset-left, 0px) + 1.1rem); }
+        .lightbox-nav-left { top: 50%; transform: translateY(-50%); left: calc(env(safe-area-inset-left, 0px) + 0.5rem); }
+        .lightbox-nav-right { top: 50%; transform: translateY(-50%); right: calc(env(safe-area-inset-right, 0px) + 0.5rem); }
+        #lightbox-content img, #lightbox-content video {
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animate-bounce, .animate-pulse, .animate-spin { animation: none !important; }
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-red-500 selection:text-white relative bg-black">
+
+    <div id="speed-glow" class="fixed inset-0 bg-red-600/0 pointer-events-none z-40"></div>
+
+    <!-- AUDIO FILES LOKAL -->
+    <audio id="bgm" loop preload="auto">
+        <source src="./bgm.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-rev" loop preload="auto">
+        <source src="./sfx-gas.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-fireworks" preload="auto">
+        <source src="./sfx-kembang-api.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- FLOATING MUTE TOGGLE -->
+    <button id="btn-mute" aria-label="Mute atau unmute suara" class="floating-btn-tr w-11 h-11 rounded-full bg-black/60 border border-red-500/30 backdrop-blur-sm text-red-500 flex items-center justify-center">
+        <i id="mute-icon" class="ph ph-speaker-high text-lg"></i>
+    </button>
+
+    <!-- PROGRESS DOTS -->
+    <div id="progress-dots" aria-hidden="true" class="floating-dots-tc flex gap-2">
+        <span data-step="0" class="w-2 h-2 rounded-full bg-red-500 transition-colors duration-300"></span>
+        <span data-step="1" class="w-2 h-2 rounded-full bg-neutral-700 transition-colors duration-300"></span>
+        <span data-step="2" class="w-2 h-2 rounded-full bg-neutral-700 transition-colors duration-300"></span>
+        <span data-step="3" class="w-2 h-2 rounded-full bg-neutral-700 transition-colors duration-300"></span>
+    </div>
+
+    <!-- ================= PAGE 0: PRELOADER SCREEN ================= -->
+    <div id="page-preload" class="fixed inset-0 bg-black z-[999] flex flex-col justify-center items-center font-digital">
+        <div class="w-[85vw] max-w-[300px] border border-neutral-800 p-6 rounded-2xl bg-[#0a0a0a] text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 h-1 bg-red-500 animate-pulse w-full"></div>
+            <i class="ph ph-cpu text-4xl text-red-500 mb-4 block animate-spin" style="animation-duration: 3s"></i>
+            <h4 class="text-xs tracking-[0.2em] text-gray-500 uppercase mb-2">ECU INITIALIZING</h4>
+            <div class="text-3xl font-black text-white mb-4" id="load-pct">0%</div>
+            <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                <div id="load-bar" class="h-full bg-red-500 w-0 transition-all duration-200"></div>
+            </div>
+            <p id="loader-msg" class="text-[9px] text-neutral-600 mt-4 tracking-wider uppercase">Checking system hardware...</p>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 1: START SCREEN ================= -->
+    <div id="page-1" class="page justify-center items-center bg-black z-50">
+        <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col items-center max-w-lg px-6">
+            <div class="w-16 h-16 rounded-full bg-red-950/40 border border-red-500/30 flex items-center justify-center mb-8 start-anim">
+                <i class="ph ph-shield-checkered text-3xl text-red-500 animate-pulse"></i>
+            </div>
+            <h1 class="start-anim text-5xl md:text-7xl font-black text-center mb-4 tracking-widest uppercase text-white">
+                SYSTEM <span class="text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]">READY</span>
+            </h1>
+            <p class="start-anim text-sm md:text-base text-gray-500 mb-12 text-center font-light tracking-wide">
+                Secure connection established. Initiate ignition and unlock system permissions to load your dashboard.
+            </p>
+            <div class="relative z-50 start-anim">
+                <button id="btn-start" class="btn-neon text-red-500 hover:text-white font-bold py-4 px-12 rounded-full flex items-center gap-3 text-lg tracking-widest uppercase cursor-pointer">
+                    <i class="ph ph-key text-2xl"></i>
+                    <span>Access Ignition</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 1.5: THE DIGITAL DASHBOARD GAME ================= -->
+    <div id="page-game" class="page justify-center items-center px-4 md:px-6 z-[45] bg-transparent overflow-hidden">
+        <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+        
+        <!-- Garis Kecepatan Anime Dynamic -->
+        <div id="speed-lines-container" class="absolute inset-0 pointer-events-none opacity-40"></div>
+
+        <div id="game-container-box" class="relative z-10 flex flex-col items-center max-w-[500px] w-full game-anim">
+            <header class="text-center mb-6">
+                <span class="text-xs text-red-500 font-bold tracking-[0.25em] uppercase">Security Checkpoint</span>
+                <h3 class="text-2xl font-black uppercase tracking-wider text-white mt-1">HIT 188 KM/H</h3>
+                <p class="text-xs text-gray-400 mt-2">Spam tombol gas di bawah sampai spidometer tembus 188 km/h!</p>
+                <p id="best-time-label" class="hidden items-center justify-center gap-1 text-[10px] text-yellow-500/80 mt-2 tracking-wide">
+                    <i class="ph-fill ph-trophy"></i> <span id="best-time-value"></span>
+                </p>
+            </header>
+
+            <!-- VARIO 160 DASHBOARD VIEW -->
+            <div class="w-full honda-dash-shell mb-8">
+                <!-- TOP INDICATORS -->
+                <div class="flex justify-between px-10 mb-2 text-[22px]">
+                    <i id="ind-left" class="ph-fill ph-arrow-left text-green-500 indicator-icon"></i>
+                    <i id="ind-key" class="ph-fill ph-key text-yellow-500 indicator-icon on"></i>
+                    <i class="ph-fill ph-headlights text-blue-500 indicator-icon on"></i>
+                    <i id="ind-engine" class="ph-fill ph-engine text-orange-400 indicator-icon"></i>
+                    <i id="ind-battery" class="ph-fill ph-battery-warning text-red-500 indicator-icon"></i>
+                    <i id="ind-right" class="ph-fill ph-arrow-right text-green-500 indicator-icon"></i>
+                </div>
+
+                <!-- LCD SCREEN -->
+                <div class="lcd-screen flex flex-col font-digital relative">
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_3px] pointer-events-none"></div>
+
+                    <div class="flex justify-between items-start z-10">
+                        <!-- Kiri: Bensin -->
+                        <div class="flex flex-col items-center justify-between h-[75px]">
+                            <span class="text-[10px] lcd-text font-bold leading-none -ml-4">F</span>
+                            <div class="flex flex-col-reverse items-start gap-[1px]">
+                                <div id="fuel-1" class="fuel-segment active"></div>
+                                <div id="fuel-2" class="fuel-segment active"></div>
+                                <div id="fuel-3" class="fuel-segment active"></div>
+                                <div id="fuel-4" class="fuel-segment active"></div>
+                                <div id="fuel-5" class="fuel-segment active"></div>
+                                <div id="fuel-6" class="fuel-segment active"></div>
+                                <div id="fuel-7" class="fuel-segment active"></div>
+                                <div id="fuel-8" class="fuel-segment active"></div>
+                            </div>
+                            <div class="flex gap-1 items-end -ml-3 mt-1">
+                                <span id="fuel-e-label" class="text-[10px] lcd-text font-bold leading-none transition-colors">E</span>
+                                <i class="ph-fill ph-gas-pump lcd-text text-[12px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- Tengah: Speedometer -->
+                        <div class="flex items-end mt-2">
+                            <div class="relative flex items-end">
+                                <span class="speedo-digits font-black tracking-tighter italic lcd-text-dim absolute right-0" style="transform: skewX(-5deg);">188</span>
+                                <span id="speed-text" class="speedo-digits lcd-text font-black tracking-tighter italic relative z-10 text-right" style="transform: skewX(-5deg);">0</span>
+                            </div>
+                            <span class="text-sm md:text-base lcd-text font-bold italic ml-2 mb-2">km/h</span>
+                        </div>
+
+                        <!-- Kanan: Jam & Odo -->
+                        <div class="flex flex-col items-end text-right h-full justify-between">
+                            <div class="flex items-center gap-1 mb-4">
+                                <i class="ph ph-clock lcd-text text-[10px]"></i>
+                                <span id="dash-clock" class="text-sm lcd-text tracking-widest font-bold">--:--</span>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[8px] lcd-text uppercase tracking-widest font-bold">TOTAL</span>
+                                <div class="flex items-end gap-1">
+                                    <span class="text-lg lcd-text tracking-wider font-bold">8888</span>
+                                    <span class="text-[10px] lcd-text font-bold mb-[2px]">km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bawah: Bar km/L -->
+                    <div class="mt-4 pt-1 border-t border-white/20 relative z-10 w-full flex items-center gap-2">
+                        <span class="text-[9px] lcd-text font-bold italic">km/L</span>
+                        <div class="flex-1 relative h-3 flex items-center justify-between px-1">
+                            <span class="text-[8px] lcd-text">0</span>
+                            <span class="text-[8px] lcd-text">20</span>
+                            <span class="text-[8px] lcd-text">40</span>
+                            <span class="text-[8px] lcd-text">60</span>
+                            <span class="text-[8px] lcd-text">80</span>
+                            <div class="absolute top-1/2 -translate-y-1/2 left-0 h-[2px] bg-white/20 w-full z-0 border-b border-white/10"></div>
+                            <div id="kml-bar" class="absolute top-1/2 -translate-y-1/2 left-6 h-[4px] bg-[#e5e7eb] w-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)] transition-all duration-100 origin-left"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between px-8 mt-2">
+                    <button class="hardware-btn text-[10px] text-gray-500 font-bold tracking-widest px-8 py-2 uppercase">Select</button>
+                    <button class="hardware-btn text-[10px] text-gray-500 font-bold tracking-widest px-8 py-2 uppercase">Set</button>
+                </div>
+            </div>
+
+            <button id="btn-throttle" class="w-full btn-neon text-red-500 hover:text-white font-bold py-5 px-8 rounded-2xl flex flex-col items-center gap-1 text-sm tracking-widest uppercase cursor-pointer select-none">
+                <i class="ph ph-hand-grabbing text-3xl mb-1 animate-bounce"></i>
+                <span>GASS POL! (TAP DISINI)</span>
+                <span class="text-[10px] text-neutral-500 font-light normal-case">Ketuk super cepat sampai top speed</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 2: GALLERY ================= -->
+    <div id="page-2" class="page pt-20 px-6 pb-20 z-40 bg-transparent">
+        <div class="max-w-6xl mx-auto flex flex-col min-h-full">
+            <header class="text-center mb-16 gallery-anim">
+                <h2 class="text-4xl md:text-5xl font-black text-white uppercase tracking-wider mt-1 mb-3">
+                     <span class="text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">Memories</span>
+                </h2>
+                <div class="flex items-center justify-center gap-2 text-gray-500">
+                    <i class="ph ph-camera text-xl"></i>
+                    <p class="tracking-wide text-xs md:text-sm">Dokumentasi terbaik sang pembalap liar hati aku (Klik foto/video untuk detail)</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <!-- Foto 1 (Image) -->
+                <div class="polaroid gallery-anim" data-tilt="-2" data-type="image" tabindex="0" role="button" aria-label="Lihat foto: Sok cool banget herann" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative">
+                        <img src="./media/p1.jpeg" alt="Momen: Sok cool banget herann" class="gallery-media w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-sunglasses text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">Sok cool banget herann</p>
+                    </div>
+                </div>
+
+                <!-- Foto 2 (Image) -->
+                <div class="polaroid gallery-anim" data-tilt="3" data-type="image" tabindex="0" role="button" aria-label="Lihat foto: Awas musang rabies!" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative">
+                        <img src="./media/p2.jpeg" alt="Momen: Awas musang rabies!" class="gallery-media w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-road-horizon text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">Awas musang rabies!</p>
+                    </div>
+                </div>
+
+                <!-- Foto 3 (Image) -->
+                <div class="polaroid gallery-anim" data-tilt="-3" data-type="image" tabindex="0" role="button" aria-label="Lihat foto: udah ngantuk banget ini buset" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative">
+                        <img src="./media/p3.jpeg" alt="Momen: udah ngantuk banget ini buset" class="gallery-media w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-gas-pump text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">udah ngantuk banget ini buset</p>
+                    </div>
+                </div>
+
+                <!-- Foto 4 (Image) -->
+                <div class="polaroid gallery-anim" data-tilt="3" data-type="image" tabindex="0" role="button" aria-label="Lihat foto: Aduhai" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative">
+                        <img src="./media/p4.jpeg" alt="Momen: Aduhai" class="gallery-media w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-road-horizon text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">Aduhai</p>
+                    </div>
+                </div>
+
+                <!-- Video 1 (p5.mp4 - Tipe VIDEO) -->
+                <div class="polaroid gallery-anim" data-tilt="-2" data-type="video" data-src="./media/p5.mp4" tabindex="0" role="button" aria-label="Putar video: Yang penting mangan" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative flex justify-center items-center group">
+                        <!-- Preview video otomatis tanpa suara, autoplay saat masuk viewport -->
+                        <video src="./media/p5.mp4" muted playsinline loop preload="metadata" class="gallery-media absolute inset-0 w-full h-full object-cover"></video>
+                        <!-- Play Button Overlay -->
+                        <div class="relative z-10 w-12 h-12 bg-red-600/80 rounded-full flex items-center justify-center text-white backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-play text-2xl ml-1"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-video-camera text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">Yang penting mangan</p>
+                    </div>
+                </div>
+
+                <!-- Video 2 (p6.mp4 - Tipe VIDEO) -->
+                <div class="polaroid gallery-anim" data-tilt="3" data-type="video" data-src="./media/p6.mp4" tabindex="0" role="button" aria-label="Putar video: Mending gue turu" onclick="openLightbox(this)">
+                    <div class="overflow-hidden rounded bg-gray-950 aspect-video relative flex justify-center items-center group">
+                        <video src="./media/p6.mp4" muted playsinline loop preload="metadata" class="gallery-media absolute inset-0 w-full h-full object-cover"></video>
+                        <div class="relative z-10 w-12 h-12 bg-red-600/80 rounded-full flex items-center justify-center text-white backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-play text-2xl ml-1"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 justify-center mt-4 text-red-400">
+                        <i class="ph ph-video-camera text-lg caption-icon"></i>
+                        <p class="font-handwriting text-lg caption-text">Mending gue turu</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto pb-16 text-center gallery-anim">
+                <button id="btn-next-msg" class="btn-neon text-gray-300 hover:text-white py-4 px-10 rounded-full inline-flex items-center gap-3 cursor-pointer tracking-wider text-sm font-semibold uppercase">
+                    <span>Buka Transmisi Rahasia</span>
+                    <i class="ph ph-caret-right text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL FOR EXPANDED CARDS -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 z-[100] hidden flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
+        <button id="lightbox-close" onclick="event.stopPropagation(); closeLightbox();" aria-label="Tutup" class="lightbox-safe-top-right absolute text-white text-4xl hover:text-red-500 transition-colors">
+            <i class="ph ph-x-circle"></i>
+        </button>
+        <div id="lightbox-counter" class="lightbox-safe-top-left absolute text-white/70 text-xs font-digital tracking-widest bg-black/50 px-3 py-1.5 rounded-full border border-white/10"></div>
+        <button id="lightbox-prev" onclick="event.stopPropagation(); lightboxPrev();" aria-label="Sebelumnya" class="lightbox-nav-left absolute flex items-center justify-center w-11 h-11 rounded-full bg-black/50 border border-white/10 text-white/80 hover:text-red-500 hover:border-red-500/40 transition-colors">
+            <i class="ph ph-caret-left text-2xl"></i>
+        </button>
+        <button id="lightbox-next" onclick="event.stopPropagation(); lightboxNext();" aria-label="Berikutnya" class="lightbox-nav-right absolute flex items-center justify-center w-11 h-11 rounded-full bg-black/50 border border-white/10 text-white/80 hover:text-red-500 hover:border-red-500/40 transition-colors">
+            <i class="ph ph-caret-right text-2xl"></i>
+        </button>
+        <div id="lightbox-content" class="bg-[#0f0f0f] border border-neutral-800 p-4 pb-8 rounded-xl max-w-2xl w-full flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.2)]" onclick="event.stopPropagation()">
+            <!-- Target visual clones inject here via JS -->
+        </div>
+        <p class="text-white/30 text-[10px] tracking-widest uppercase mt-4 hidden sm:block">Geser kiri/kanan untuk ganti &nbsp;•&nbsp; Geser bawah untuk tutup &nbsp;•&nbsp; Tap 2x untuk love</p>
+    </div>
+
+    <!-- ================= PAGE 3: MESSAGE (ENDLESS FIREWORKS) ================= -->
+    <div id="page-3" class="page justify-start items-center p-4 md:p-8 z-30 bg-transparent overflow-y-auto relative">
+        <canvas id="fireworks-canvas" class="fixed inset-0 pointer-events-none z-10 bg-black/30"></canvas>
+        <div class="max-w-2xl w-full bg-[#0d0d0d]/90 backdrop-blur-sm border border-neutral-800 rounded-3xl p-6 md:p-10 my-16 relative overflow-hidden msg-anim shadow-[0_0_50px_rgba(239,68,68,0.1)] z-20">
+            <i class="ph ph-envelope-simple-open absolute -bottom-10 -right-10 text-9xl text-neutral-950/40"></i>
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-red-600"></div>
+
+            <div class="flex items-center gap-3 border-b border-neutral-900 pb-6 mb-8 msg-anim relative">
+                <div class="w-10 h-10 rounded-xl bg-red-950/30 border border-red-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                    <i class="ph-fill ph-gift text-2xl text-red-500"></i>
+                </div>
+                <h3 class="text-xl md:text-2xl font-black text-white uppercase tracking-wider font-digital">
+                    Message
+                </h3>
+            </div>
+            
+            <div class="space-y-6 text-gray-300 font-light leading-relaxed msg-anim relative z-10 text-sm md:text-base">
+                <p>
+                    <strong class="text-white font-black text-lg block mb-2">Selamat ulang tahun ya, sayang!</strong>
+                </p>
+                <p>
+                    Pelan - pelan saja, sayang. aku tau targetmy banyak, jaga kesehatannya. semoga sayang tulusmu ke aku membuat lancar rezekimu.</p>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-neutral-900 flex items-center justify-between msg-anim relative z-10">
+                <p class="font-black text-white text-lg md:text-xl uppercase tracking-wider flex items-center gap-2">
+                    I love you <span class="text-red-600 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">3000!</span>
+                    <i class="ph-fill ph-flag-checkered text-xl text-red-500 animate-pulse"></i>
+                </p>
+                <i class="ph-fill ph-heart text-3xl text-red-500 heartbeat-icon drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]"></i>
+            </div>
+            
+            <div class="mt-8 text-center msg-anim z-20 relative">
+                 <button id="btn-replay" class="text-xs text-neutral-500 hover:text-red-400 tracking-widest uppercase transition-colors flex items-center justify-center gap-2 w-full py-2 cursor-pointer">
+                    <i class="ph ph-arrows-clockwise text-lg"></i> Replay System
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= HELPERS: REDUCED MOTION & HAPTICS =================
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function vibrate(pattern) {
+            if (navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch (e) {}
+            }
+        }
+
+        // ================= TOAST (milestone + success summary) =================
+        function showToast(mainText, subText) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed left-1/2 z-[95] -translate-x-1/2 text-center pointer-events-none';
+            toast.style.top = 'calc(env(safe-area-inset-top, 0px) + 84px)';
+            toast.innerHTML = `
+                <div class="bg-black/80 border border-red-500/40 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+                    <p class="font-digital font-black text-white text-base tracking-wide">${mainText}</p>
+                    ${subText ? `<p class="text-red-400 text-xs mt-1 tracking-wide">${subText}</p>` : ''}
+                </div>
+            `;
+            document.body.appendChild(toast);
+            gsap.fromTo(toast, { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.35, ease: "back.out(2)" });
+            setTimeout(() => {
+                gsap.to(toast, { opacity: 0, y: -10, duration: 0.35, onComplete: () => toast.remove() });
+            }, 2200);
+        }
+
+        // ================= PROGRESS DOTS =================
+        function updateProgressDots(step) {
+            document.querySelectorAll('#progress-dots span').forEach((el, i) => {
+                el.classList.toggle('bg-red-500', i <= step);
+                el.classList.toggle('bg-neutral-700', i > step);
+            });
+        }
+
+        // ================= MUTE TOGGLE =================
+        let isMuted = false;
+        document.getElementById('btn-mute').addEventListener('click', () => {
+            isMuted = !isMuted;
+            [bgmRef(), sfxRevRef(), sfxFireworksRef()].forEach(a => a.muted = isMuted);
+            document.getElementById('mute-icon').className = isMuted ? 'ph ph-speaker-slash text-lg' : 'ph ph-speaker-high text-lg';
+        });
+        // small indirection so this block can sit above the audio consts declared later
+        function bgmRef() { return document.getElementById('bgm'); }
+        function sfxRevRef() { return document.getElementById('sfx-rev'); }
+        function sfxFireworksRef() { return document.getElementById('sfx-fireworks'); }
+
+        // ================= PRELOADER LOCAL ASSETS UPDATE =================
+        // Hanya foto yang benar-benar di-preload (hemat kuota); video lazy-load pas dibuka
+        const imagesToLoad = [
+            "./media/p1.jpeg",
+            "./media/p2.jpeg",
+            "./media/p3.jpeg",
+            "./media/p4.jpeg"
+        ];
+        const loaderMessages = [
+            "Checking system hardware...",
+            "Menyalakan ECU...",
+            "Sinkronisasi speedometer...",
+            "Memuat kenangan...",
+            "Cek tekanan angin virtual..."
+        ];
+        let loaderMsgIndex = 0;
+        const loaderMsgEl = document.getElementById('loader-msg');
+        const loaderMsgInterval = setInterval(() => {
+            loaderMsgIndex = (loaderMsgIndex + 1) % loaderMessages.length;
+            loaderMsgEl.innerText = loaderMessages[loaderMsgIndex];
+        }, 550);
+
+        let loadedCount = 0;
+        const totalAssets = imagesToLoad.length;
+
+        function updatePreloaderProgress() {
+            loadedCount++;
+            let pct = Math.floor((loadedCount / totalAssets) * 100);
+            document.getElementById('load-pct').innerText = pct + "%";
+            document.getElementById('load-bar').style.width = pct + "%";
+
+            if (loadedCount >= totalAssets) {
+                clearInterval(loaderMsgInterval);
+                setTimeout(() => {
+                    gsap.to("#page-preload", {
+                        autoAlpha: 0, duration: 0.6, ease: "power2.out", onComplete: () => {
+                            document.getElementById('page-preload').remove();
+                            // Trigger Page 1 entrance
+                            gsap.set("#page-1", { autoAlpha: 1 });
+                            gsap.from(".start-anim", { y: 20, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out", delay: 0.2 });
+                            gsap.to("#btn-start", { boxShadow: "0 0 25px rgba(220,38,38,0.5)", duration: 1.5, yoyo: true, repeat: -1 });
+                        }
+                    });
+                }, 600);
+            }
+        }
+
+        // Start loading images via JS
+        if (totalAssets > 0) {
+            imagesToLoad.forEach(src => {
+                let img = new Image();
+                img.src = src;
+                img.onload = updatePreloaderProgress;
+                img.onerror = updatePreloaderProgress; // bypass error
+            });
+        } else {
+            loadedCount = -1; updatePreloaderProgress();
+        }
+
+        // ================= DYNAMIC SPEED LINES GENERATOR =================
+        const linesContainer = document.getElementById('speed-lines-container');
+        for (let i = 0; i < 15; i++) {
+            let line = document.createElement('div');
+            line.className = 'speed-line';
+            linesContainer.appendChild(line);
+        }
+
+        function animateSpeedLines(intensity) {
+            if (reducedMotion) return;
+            const lines = document.querySelectorAll('.speed-line');
+            lines.forEach(line => {
+                if (intensity === 0) {
+                    gsap.killTweensOf(line);
+                    line.style.opacity = 0;
+                    return;
+                }
+                if (!gsap.isTweening(line)) {
+                    let duration = Math.random() * 0.4 + 0.1 / intensity;
+                    gsap.set(line, {
+                        top: Math.random() * window.innerHeight,
+                        left: -200,
+                        width: Math.random() * 200 + 100,
+                        opacity: Math.random() * intensity
+                    });
+                    gsap.to(line, {
+                        left: window.innerWidth + 200,
+                        duration: duration,
+                        ease: "none",
+                        onComplete: () => {}
+                    });
+                }
+            });
+        }
+
+        // ================= ROUTING & ANIMATIONS ENGINE =================
+        function switchPage(fadeOutId, fadeInId, initFunction) {
+            gsap.to(fadeOutId, {
+                autoAlpha: 0, y: -30, duration: 0.6, ease: "power2.in",
+                onComplete: () => {
+                    gsap.set(fadeOutId, { y: 0 });
+                    document.querySelector(fadeInId).scrollTop = 0;
+                    gsap.fromTo(fadeInId, 
+                        { autoAlpha: 0, y: 30 },
+                        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }
+                    );
+                    if (initFunction) initFunction();
+                }
+            });
+        }
+
+        // ================= GAME LOGIC & DASHBOARD SINKRON =================
+        let speed = 0;
+        const maxSpeed = 188;
+        let gameFinished = false;
+        let speedDecayInterval = null;
+        let isPage3Active = false;
+        let fuelLevel = 100;
+        let gameStartTime = null;
+        let bestTime = null;
+        const milestones = [50, 100, 150];
+        const milestoneMessages = { 50: "GASS TERUS! 🔥", 100: "SETENGAH JALAN! 💨", 150: "DIKIT LAGI!! 🚨" };
+        let shownMilestones = new Set();
+
+        const speedText = document.getElementById('speed-text');
+        const throttleBtn = document.getElementById('btn-throttle');
+        const speedGlow = document.getElementById('speed-glow');
+        const sfxRev = document.getElementById('sfx-rev');
+        const sfxFireworks = document.getElementById('sfx-fireworks');
+        const bgm = document.getElementById('bgm');
+
+        sfxRev.preservesPitch = false;
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('dash-clock');
+            if (el) el.innerText = `${h}:${m}`;
+        }
+        updateClock();
+        setInterval(updateClock, 15000);
+
+        function updateBestTimeLabel() {
+            const el = document.getElementById('best-time-label');
+            if (bestTime === null) { el.classList.add('hidden'); el.classList.remove('flex'); return; }
+            el.classList.remove('hidden'); el.classList.add('flex');
+            document.getElementById('best-time-value').innerText = 'Rekor kamu: ' + bestTime.toFixed(1) + ' detik';
+        }
+
+        function checkMilestones() {
+            milestones.forEach(m => {
+                if (speed >= m && !shownMilestones.has(m)) {
+                    shownMilestones.add(m);
+                    showToast(milestoneMessages[m]);
+                    vibrate(15);
+                }
+            });
+        }
+
+        function startSpeedDecay() {
+            if (speedDecayInterval) clearInterval(speedDecayInterval);
+            speedDecayInterval = setInterval(() => {
+                if (gameFinished) return;
+                
+                if (speed > 0) {
+                    speed -= 2.5; 
+                    if (speed <= 0) {
+                        speed = 0;
+                        sfxRev.pause(); 
+                    } else {
+                        sfxRev.playbackRate = 1.0 + (speed / maxSpeed) * 1.5; 
+                        sfxRev.volume = 0.3 + (speed / maxSpeed) * 0.7;
+                    }
+                    updateDashboard();
+                }
+            }, 100);
+        }
+
+        function updateDashboard() {
+            speedText.innerText = Math.floor(speed);
+
+            // Instant Fuel Consumption Bar
+            const kmlBar = document.getElementById('kml-bar');
+            const kmlPercent = 100 - ((speed / maxSpeed) * 90); 
+            kmlBar.style.width = `${Math.max(10, kmlPercent)}%`;
+
+            // Lebar Realistis Indikator Bensin Vario 160 (Makin cepat makin abis)
+            const activeSegments = Math.max(1, Math.ceil((fuelLevel / 100) * 8));
+            for (let i = 1; i <= 8; i++) {
+                const bar = document.getElementById(`fuel-${i}`);
+                if (i <= activeSegments) bar.classList.add('active');
+                else bar.classList.remove('active');
+            }
+            const eLabel = document.getElementById('fuel-e-label');
+            if (eLabel) {
+                eLabel.classList.toggle('text-red-500', fuelLevel < 20);
+                eLabel.classList.toggle('lcd-text', fuelLevel >= 20);
+            }
+
+            // Screen shaking & speedline intensity injector
+            if (speed > 0 && !gameFinished) {
+                let intensity = speed / maxSpeed;
+                animateSpeedLines(intensity);
+                if (!reducedMotion) {
+                    gsap.set("#game-container-box", {
+                        x: `random(-${intensity * 5}, ${intensity * 5})`,
+                        y: `random(-${intensity * 5}, ${intensity * 5})`
+                    });
+                }
+            } else {
+                animateSpeedLines(0);
+                gsap.set("#game-container-box", { x: 0, y: 0 });
+            }
+
+            // Blink Smartkey & Engine di top-speed zone
+            if (speed > 120) document.getElementById('ind-engine').classList.add('on');
+            else document.getElementById('ind-engine').classList.remove('on');
+
+            if (speed > 160) {
+                document.getElementById('ind-battery').classList.add('on');
+                if (Math.floor(speed) % 2 === 0) {
+                    document.getElementById('ind-key').classList.add('on');
+                } else {
+                    document.getElementById('ind-key').classList.remove('on');
+                }
+            } else {
+                document.getElementById('ind-battery').classList.remove('on');
+                document.getElementById('ind-key').classList.add('on');
+            }
+
+            // Danger Glow Red Screen
+            if (speed >= 165 && !gameFinished) {
+                document.getElementById('ind-left').classList.add('on');
+                document.getElementById('ind-right').classList.add('on');
+                speedGlow.style.backgroundColor = `rgba(239, 68, 68, ${0.05 + ((speed / maxSpeed) * 0.25)})`;
+            } else if (!gameFinished) {
+                document.getElementById('ind-left').classList.remove('on');
+                document.getElementById('ind-right').classList.remove('on');
+                speedGlow.style.backgroundColor = "transparent";
+            }
+
+            checkMilestones();
+        }
+
+        throttleBtn.addEventListener('mousedown', triggerThrottle);
+        throttleBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerThrottle(); });
+
+        function triggerThrottle() {
+            if (gameFinished) return;
+
+            if (gameStartTime === null) gameStartTime = performance.now();
+
+            speed += 13; 
+            if (speed > maxSpeed) speed = maxSpeed;
+
+            if (fuelLevel > 12) fuelLevel -= 1.4; 
+
+            if (sfxRev.paused) sfxRev.play().catch(() => {});
+            
+            let pitchLevel = 1.0 + (speed / maxSpeed) * 1.5; 
+            sfxRev.playbackRate = pitchLevel;
+            sfxRev.volume = 0.5 + (speed / maxSpeed) * 0.5; 
+
+            vibrate(8);
+            gsap.fromTo("#btn-throttle", { scale: 0.96 }, { scale: 1, duration: 0.1, ease: "power1.out" });
+            updateDashboard();
+
+            if (speed >= maxSpeed && !gameFinished) {
+                gameFinished = true;
+                clearInterval(speedDecayInterval);
+                sfxRev.pause(); 
+                animateSpeedLines(0);
+                triggerTopSpeedSuccess();
+            }
+        }
+
+        function triggerTopSpeedSuccess() {
+            const elapsedSec = gameStartTime ? ((performance.now() - gameStartTime) / 1000) : 0;
+            let isNewBest = false;
+            if (elapsedSec > 0 && (bestTime === null || elapsedSec < bestTime)) {
+                bestTime = elapsedSec;
+                isNewBest = true;
+            }
+
+            // FORCE MATI BACKGROUND MERAH!
+            speedGlow.style.backgroundColor = "transparent";
+            gsap.set("#game-container-box", { x: 0, y: 0 });
+
+            gsap.to(".lcd-screen", { backgroundColor: "#e5e7eb", duration: 0.1, yoyo: true, repeat: 5, 
+                onComplete: () => {
+                    gsap.set(".lcd-screen", { clearProps: "backgroundColor" });
+                }
+            });
+
+            const shakeRange = reducedMotion ? 0 : 15;
+            gsap.to(".game-anim", {
+                x: `random(-${shakeRange}, ${shakeRange})`, y: `random(-${shakeRange}, ${shakeRange})`, duration: 0.04, repeat: 20, yoyo: true,
+                onComplete: () => {
+                    gsap.set(".game-anim", { x: 0, y: 0 });
+                    bgm.volume = 0.5;
+                    bgm.play().catch(() => {});
+                    switchPage("#page-game", "#page-2", initGalleryAnimations);
+                    updateProgressDots(2);
+                    vibrate([40, 30, 40, 30, 90]);
+                    setTimeout(() => {
+                        const timeLabel = elapsedSec > 0 ? `Waktu tempuh: ${elapsedSec.toFixed(1)} detik${isNewBest ? ' — rekor baru! 🏆' : ''}` : '';
+                        showToast('🏁 188 KM/H TERCAPAI!', timeLabel);
+                    }, 700);
+                }
+            });
+        }
+
+        // ================= GALLERY: LIGHTBOX WITH SWIPE + NAV + DOUBLE-TAP HEART =================
+        const galleryItems = Array.from(document.querySelectorAll('.polaroid'));
+        let currentLightboxIndex = -1;
+
+        function renderLightboxItem(index) {
+            const element = galleryItems[index];
+            const content = document.getElementById('lightbox-content');
+
+            const type = element.getAttribute('data-type') || 'image';
+            const captionEl = element.querySelector('.caption-text') || element.querySelector('p');
+            const iconEl = element.querySelector('.caption-icon') || element.querySelector('i');
+            const captionText = captionEl ? captionEl.innerText : 'Memory';
+            const iconClass = iconEl ? iconEl.className : 'ph ph-camera';
+
+            let mediaHTML = '';
+            if (type === 'video') {
+                const videoSrc = element.getAttribute('data-src');
+                mediaHTML = `
+                    <video src="${videoSrc}" controls autoplay class="max-w-full max-h-[70vh] w-auto rounded shadow-[0_10px_30px_rgba(0,0,0,0.8)] focus:outline-none"></video>
+                `;
+            } else {
+                const imgSrc = element.querySelector('img').src;
+                mediaHTML = `
+                    <img src="${imgSrc}" class="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded shadow-[0_10px_30px_rgba(0,0,0,0.8)]" alt="Original Memory">
+                `;
+            }
+
+            content.innerHTML = `
+                ${mediaHTML}
+                <div class="flex items-center gap-2 justify-center mt-6 text-red-400">
+                    <i class="${iconClass} text-2xl"></i>
+                    <p class="font-handwriting text-2xl text-center">${captionText}</p>
+                </div>
+            `;
+
+            document.getElementById('lightbox-counter').innerText = `${index + 1} / ${galleryItems.length}`;
+        }
+
+        function openLightbox(element) {
+            currentLightboxIndex = galleryItems.indexOf(element);
+            if (currentLightboxIndex === -1) return;
+            renderLightboxItem(currentLightboxIndex);
+
+            const modal = document.getElementById('lightbox-modal');
+            const content = document.getElementById('lightbox-content');
+            modal.classList.remove('hidden');
+            
+            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+            gsap.fromTo(content, { scale: 0.8, y: 30 }, { scale: 1, y: 0, duration: 0.4, ease: "back.out(1.1)" });
+        }
+
+        function lightboxNext() {
+            if (currentLightboxIndex === -1) return;
+            currentLightboxIndex = (currentLightboxIndex + 1) % galleryItems.length;
+            renderLightboxItem(currentLightboxIndex);
+        }
+
+        function lightboxPrev() {
+            if (currentLightboxIndex === -1) return;
+            currentLightboxIndex = (currentLightboxIndex - 1 + galleryItems.length) % galleryItems.length;
+            renderLightboxItem(currentLightboxIndex);
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightbox-modal');
+            const content = document.getElementById('lightbox-content');
+            
+            gsap.to(modal, { opacity: 0, duration: 0.2, onComplete: () => {
+                modal.classList.add('hidden');
+                content.innerHTML = ''; 
+            }});
+        }
+
+        function spawnHeart(x, y) {
+            const heart = document.createElement('i');
+            heart.className = 'ph-fill ph-heart fixed text-red-500 pointer-events-none z-[200]';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = '90px';
+            heart.style.transform = 'translate(-50%, -50%) scale(0.4)';
+            heart.style.opacity = '0';
+            document.body.appendChild(heart);
+            gsap.to(heart, { opacity: 1, scale: 1.15, duration: 0.3, ease: "back.out(3)" });
+            gsap.to(heart, { opacity: 0, scale: 1, duration: 0.5, delay: 0.35, onComplete: () => heart.remove() });
+            vibrate(15);
+        }
+
+        // Unified gesture handling on the lightbox media: tap (double-tap = heart), swipe L/R (nav), swipe down (close)
+        const lightboxContentEl = document.getElementById('lightbox-content');
+        let gestureStartX = 0, gestureStartY = 0, gestureStartTime = 0;
+        let lastTapTime = 0, lastTapX = 0, lastTapY = 0;
+
+        lightboxContentEl.addEventListener('pointerdown', (e) => {
+            gestureStartX = e.clientX; gestureStartY = e.clientY; gestureStartTime = Date.now();
+        });
+
+        lightboxContentEl.addEventListener('pointerup', (e) => {
+            const dx = e.clientX - gestureStartX;
+            const dy = e.clientY - gestureStartY;
+            const dt = Date.now() - gestureStartTime;
+            const absDx = Math.abs(dx), absDy = Math.abs(dy);
+
+            if (absDx < 12 && absDy < 12) {
+                const now = Date.now();
+                const sameSpot = Math.abs(e.clientX - lastTapX) < 40 && Math.abs(e.clientY - lastTapY) < 40;
+                if (now - lastTapTime < 300 && sameSpot) {
+                    spawnHeart(e.clientX, e.clientY);
+                    lastTapTime = 0;
+                } else {
+                    lastTapTime = now; lastTapX = e.clientX; lastTapY = e.clientY;
+                }
+                return;
+            }
+
+            if (dt > 800) return;
+
+            if (absDx > 60 && absDx > absDy) {
+                if (dx < 0) lightboxNext(); else lightboxPrev();
+            } else if (dy > 80 && absDy > absDx) {
+                closeLightbox();
+            }
+        });
+
+        // ================= ROUTING CLICK CONTROLLERS =================
+        document.getElementById('btn-start').addEventListener('click', () => {
+            bgm.play().then(() => bgm.pause()).catch(() => {});
+            sfxRev.play().then(() => sfxRev.pause()).catch(() => {});
+            sfxFireworks.play().then(() => sfxFireworks.pause()).catch(() => {});
+
+            switchPage("#page-1", "#page-game", () => {
+                gameFinished = false; speed = 0; fuelLevel = 100;
+                gameStartTime = null; shownMilestones.clear();
+                updateBestTimeLabel();
+                updateDashboard(); startSpeedDecay();
+                gsap.fromTo(".game-anim", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
+            });
+            updateProgressDots(1);
+        });
+
+        document.getElementById('btn-next-msg').addEventListener('click', () => {
+            document.querySelectorAll('.polaroid video').forEach(v => v.pause());
+            switchPage("#page-2", "#page-3", initMessageAnimations);
+            updateProgressDots(3);
+        });
+
+        document.getElementById('btn-replay').addEventListener('click', () => {
+            bgm.pause(); bgm.currentTime = 0;
+            sfxFireworks.pause(); sfxFireworks.currentTime = 0;
+            isPage3Active = false; 
+            switchPage("#page-3", "#page-1", () => gsap.fromTo(".start-anim", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out" }));
+            updateProgressDots(0);
+        });
+
+        // Keyboard access for polaroid cards (Enter/Space to open, like a real button)
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('polaroid')) {
+                e.preventDefault();
+                openLightbox(document.activeElement);
+            }
+        });
+
+        // ================= GALLERY REVEAL + PREVIEW AUTOPLAY (IntersectionObserver) =================
+        let galleryObserverInitialized = false;
+        function initGalleryAnimations() {
+            document.querySelectorAll('.polaroid').forEach((el) => {
+                let tilt = el.getAttribute('data-tilt');
+                gsap.set(el, { rotation: tilt });
+            });
+            gsap.fromTo(".gallery-anim", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: "back.out(1.1)" });
+
+            if (!galleryObserverInitialized) {
+                galleryObserverInitialized = true;
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const card = entry.target;
+                        const video = card.querySelector('video');
+                        if (entry.isIntersecting) {
+                            card.classList.add('is-revealed');
+                            if (video && !reducedMotion) video.play().catch(() => {});
+                        } else if (video) {
+                            video.pause();
+                        }
+                    });
+                }, { threshold: 0.4 });
+                galleryItems.forEach(el => observer.observe(el));
+            }
+        }
+
+        // ================= FIREWORKS: CANVAS PARTICLE SYSTEM (mobile-performant) =================
+        const fwCanvas = document.getElementById('fireworks-canvas');
+        const fwCtx = fwCanvas.getContext('2d');
+        let particles = [];
+        let rafLoopRunning = false;
+        const fwColors = ['#ef4444', '#facc15', '#fb923c', '#ec4899', '#22d3ee'];
+
+        function resizeFireworksCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            fwCanvas.width = window.innerWidth * dpr;
+            fwCanvas.height = window.innerHeight * dpr;
+            fwCanvas.style.width = window.innerWidth + 'px';
+            fwCanvas.style.height = window.innerHeight + 'px';
+            fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resizeFireworksCanvas();
+        window.addEventListener('resize', resizeFireworksCanvas);
+
+        function drawParticle(p) {
+            fwCtx.globalAlpha = Math.max(p.life, 0);
+            fwCtx.fillStyle = p.color;
+            if (p.shape === 'star') {
+                fwCtx.save();
+                fwCtx.translate(p.x, p.y);
+                fwCtx.rotate(p.rotation);
+                fwCtx.beginPath();
+                for (let i = 0; i < 4; i++) {
+                    const a = (Math.PI / 2) * i;
+                    fwCtx.lineTo(Math.cos(a) * p.size, Math.sin(a) * p.size);
+                    fwCtx.lineTo(Math.cos(a + Math.PI / 4) * p.size * 0.35, Math.sin(a + Math.PI / 4) * p.size * 0.35);
+                }
+                fwCtx.closePath();
+                fwCtx.fill();
+                fwCtx.restore();
+            } else {
+                fwCtx.beginPath();
+                fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                fwCtx.fill();
+            }
+        }
+
+        function animateParticles() {
+            fwCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+                p.rotation += p.spin;
+                p.life -= p.decay;
+                drawParticle(p);
+            });
+            fwCtx.globalAlpha = 1;
+            particles = particles.filter(p => p.life > 0);
+
+            if (isPage3Active || particles.length > 0) {
+                requestAnimationFrame(animateParticles);
+            } else {
+                rafLoopRunning = false;
+            }
+        }
+
+        function ensureParticleLoopRunning() {
+            if (!rafLoopRunning) {
+                rafLoopRunning = true;
+                requestAnimationFrame(animateParticles);
+            }
+        }
+
+        function spawnCluster(x, y) {
+            if (particles.length > 550) return; // defensive cap for low-end devices
+            const count = reducedMotion ? 16 : 45;
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = (Math.random() * 280 + 40) / 45; // scaled to per-frame px
+                particles.push({
+                    x, y,
+                    vx: Math.cos(angle) * velocity,
+                    vy: Math.sin(angle) * velocity,
+                    gravity: 0.12,
+                    life: 1,
+                    decay: Math.random() * 0.016 + 0.01,
+                    size: Math.random() * 5 + 3,
+                    color: fwColors[Math.floor(Math.random() * fwColors.length)],
+                    shape: Math.random() < 0.5 ? 'star' : 'dot',
+                    rotation: 0,
+                    spin: (Math.random() - 0.5) * 0.3
+                });
+            }
+            ensureParticleLoopRunning();
+        }
+
+        // ================= BRUTAL CHAIN FIREWORKS BURST SYSTEM =================
+        function triggerMultipleBursts() {
+            if (!isPage3Active) return;
+
+            sfxFireworks.currentTime = 0;
+            sfxFireworks.play().catch(() => {});
+
+            const clusterCount = reducedMotion ? 1 : (Math.floor(Math.random() * 2) + 3);
+
+            for (let c = 0; c < clusterCount; c++) {
+                setTimeout(() => {
+                    if (!isPage3Active) return;
+                    let originX = window.innerWidth * (0.15 + Math.random() * 0.7);
+                    let originY = window.innerHeight * (0.15 + Math.random() * 0.45);
+                    spawnCluster(originX, originY);
+                }, c * 200);
+            }
+
+            setTimeout(triggerMultipleBursts, reducedMotion ? (Math.random() * 2000 + 3500) : (Math.random() * 1200 + 1800));
+        }
+
+        // Tap the message background (not the letter card) for a bonus burst
+        document.getElementById('page-3').addEventListener('click', (e) => {
+            if (e.target.id === 'page-3' || e.target.id === 'fireworks-canvas') {
+                spawnCluster(e.clientX, e.clientY);
+                vibrate(10);
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && isPage3Active) ensureParticleLoopRunning();
+        });
+
+        function initMessageAnimations() {
+            isPage3Active = true;
+            particles = [];
+            resizeFireworksCanvas();
+
+            triggerMultipleBursts();
+            ensureParticleLoopRunning();
+            vibrate([20, 30, 20]);
+            
+            gsap.fromTo(".msg-anim", { x: -25, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out", delay: 0.2 });
+            gsap.to(".heartbeat-icon", { scale: 1.25, duration: 0.4, yoyo: true, repeat: -1, ease: "power2.inOut" });
+        }
+    </script>
+</body>
+</html>
