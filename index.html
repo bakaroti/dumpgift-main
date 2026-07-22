@@ -187,6 +187,13 @@
 
         .indicator-icon { opacity: 0.15; transition: opacity 0.2s; }
         .indicator-icon.on { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+        .indicator-housing {
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 72%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+        }
         #speed-glow { transition: background-color 0.1s ease; }
 
         .hardware-btn {
@@ -274,56 +281,69 @@
             box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 20px 45px -20px rgba(0,0,0,0.85);
         }
 
-        /* ================= CIRCULAR SPEEDOMETER GAUGE ================= */
-        .speedo-wrap {
-            position: relative;
-            width: clamp(9.5rem, 44vw, 13.5rem);
-            height: clamp(9.5rem, 44vw, 13.5rem);
-            filter: drop-shadow(0 6px 18px rgba(0,0,0,0.55));
+        /* ================= 7-SEGMENT LCD DIGITS (authentic Vario 160 dash look) ================= */
+        .seg-display { display: inline-flex; align-items: center; line-height: 1; }
+        .seg-digit { position: relative; display: inline-block; width: 0.58em; height: 1em; margin: 0 0.045em; }
+        .seg {
+            position: absolute;
+            background: rgba(229,231,235,0.09);
+            transition: background 0.06s linear, box-shadow 0.06s linear;
         }
-        .speedo-ring-track {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.06);
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
+        .seg.on {
+            background: #e8eaed;
+            box-shadow: 0 0 6px rgba(229,231,235,0.85), 0 0 2px rgba(255,255,255,1);
         }
-        .speedo-ring-ticks-minor {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: repeating-conic-gradient(rgba(229,231,235,0.28) 0deg 1deg, transparent 1deg 15deg);
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px), #000 calc(100% - 14px), transparent calc(100% - 13px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px), #000 calc(100% - 14px), transparent calc(100% - 13px));
+        .seg-a, .seg-d, .seg-g { left: 15%; width: 70%; height: 10.5%; clip-path: polygon(8% 50%, 22% 0%, 78% 0%, 92% 50%, 78% 100%, 22% 100%); }
+        .seg-a { top: 0%; }
+        .seg-g { top: 44.75%; }
+        .seg-d { top: 89.5%; }
+        .seg-f, .seg-b, .seg-e, .seg-c { width: 15%; height: 40%; clip-path: polygon(50% 6%, 100% 20%, 100% 80%, 50% 94%, 0% 80%, 0% 20%); }
+        .seg-f { top: 6%; left: 0%; }
+        .seg-b { top: 6%; right: 0%; }
+        .seg-e { top: 54%; left: 0%; }
+        .seg-c { top: 54%; right: 0%; }
+        .seg-colon { position: relative; display: inline-block; width: 0.22em; height: 1em; margin: 0 0.02em; }
+        .seg-colon .dot { position: absolute; left: 50%; width: 0.15em; height: 0.15em; margin-left: -0.075em; border-radius: 1px; background: rgba(229,231,235,0.09); transition: background 0.06s linear, box-shadow 0.06s linear; }
+        .seg-colon .dot.on { background: #e8eaed; box-shadow: 0 0 6px rgba(229,231,235,0.85); }
+        .seg-colon .dot.top { top: 26%; }
+        .seg-colon .dot.bottom { top: 61%; }
+
+        .seg-display-danger .seg.on {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239,68,68,0.9), 0 0 3px rgba(239,68,68,1);
         }
-        .speedo-ring-ticks-major {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: repeating-conic-gradient(rgba(239,68,68,0.85) 0deg 2.5deg, transparent 2.5deg 60deg);
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px), #000 calc(100% - 12px), transparent calc(100% - 11px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px), #000 calc(100% - 12px), transparent calc(100% - 11px));
+        .seg-display-danger { animation: segDangerPulse 0.5s ease-in-out infinite; }
+        @keyframes segDangerPulse {
+            0%, 100% { filter: none; }
+            50% { filter: drop-shadow(0 0 8px rgba(239,68,68,0.7)); }
         }
-        .speedo-ring-progress {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #fbbf24, #f97316 35%, #ef4444 var(--ring-progress, 0%), transparent var(--ring-progress, 0%) 360deg);
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
-            filter: drop-shadow(0 0 8px rgba(239,68,68,0.7)) drop-shadow(0 0 16px rgba(239,68,68,0.35));
-            transition: background 0.12s linear;
+        .seg-punch { animation: segPunch 0.16s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes segPunch { 0% { transform: scale(1.09); } 100% { transform: scale(1); } }
+
+        /* Segmented km/L bar graph, matches the little bar-chart on the real dash */
+        .kml-seg-bar { flex: 1; min-width: 2px; background: rgba(229,231,235,0.12); border-radius: 1px; transition: background 0.15s, box-shadow 0.15s; }
+        .kml-seg-bar.active { background: #e5e7eb; box-shadow: 0 0 3px rgba(229,231,235,0.6); }
+
+        .preload-ring-fill {
+            background: conic-gradient(from 0deg, #ef4444 var(--ring-progress, 0%), transparent var(--ring-progress, 0%) 360deg);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+            filter: drop-shadow(0 0 6px rgba(239,68,68,0.6));
+            transition: background 0.15s linear;
         }
-        .speedo-ring-danger { animation: speedoDangerPulse 0.5s ease-in-out infinite; }
-        @keyframes speedoDangerPulse {
-            0%, 100% { filter: drop-shadow(0 0 8px rgba(239,68,68,0.7)) drop-shadow(0 0 16px rgba(239,68,68,0.35)); }
-            50% { filter: drop-shadow(0 0 16px rgba(239,68,68,1)) drop-shadow(0 0 30px rgba(239,68,68,0.6)); }
+
+        /* ================= LIVELINESS: idle breathing + tactile feedback ================= */
+        .breathe-idle { animation: breatheIdle 2.6s ease-in-out infinite; }
+        @keyframes breatheIdle {
+            0%, 100% { box-shadow: 0 0 15px rgba(220,38,38,0.15), inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 20px -8px rgba(0,0,0,0.6); }
+            50% { box-shadow: 0 0 28px rgba(220,38,38,0.4), inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 20px -8px rgba(0,0,0,0.6); }
         }
-        .speedo-center {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .float-idle { animation: floatIdle 3.4s ease-in-out infinite; }
+        @keyframes floatIdle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
         @media (prefers-reduced-motion: reduce) {
             .animate-bounce, .animate-pulse, .animate-spin { animation: none !important; }
-            .speedo-ring-danger { animation: none; }
+            .seg-display-danger, .breathe-idle, .float-idle, .seg-punch { animation: none !important; }
         }
     </style>
 </head>
@@ -331,6 +351,7 @@
 <body class="antialiased selection:bg-red-500 selection:text-white relative bg-black">
 
     <div class="grain-overlay"></div>
+    <div id="cursor-glow" class="fixed w-[480px] h-[480px] rounded-full pointer-events-none z-[2] opacity-0 hidden md:block" style="background: radial-gradient(circle, rgba(239,68,68,0.07) 0%, transparent 70%); transform: translate(-50%,-50%); transition: opacity 0.6s ease;"></div>
     <div id="speed-glow" class="fixed inset-0 bg-red-600/0 pointer-events-none z-40"></div>
 
     <!-- AUDIO FILES LOKAL -->
@@ -365,7 +386,13 @@
             <span class="hud-corner hud-corner-bl hud-corners-active"></span>
             <span class="hud-corner hud-corner-br hud-corners-active"></span>
             <div class="absolute top-0 left-0 h-1 bg-red-500 animate-pulse w-full"></div>
-            <i class="ph ph-cpu text-4xl text-red-500 mb-4 block animate-spin" style="animation-duration: 3s"></i>
+            <div class="relative w-16 h-16 mx-auto mb-4">
+                <div class="absolute inset-0 rounded-full border-2 border-white/8"></div>
+                <div id="preload-ring" class="absolute inset-0 rounded-full preload-ring-fill" style="--ring-progress: 0%"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="ph ph-cpu text-2xl text-red-500 animate-spin" style="animation-duration: 3s"></i>
+                </div>
+            </div>
             <h4 class="text-xs tracking-[0.2em] text-gray-500 uppercase mb-2">ECU INITIALIZING</h4>
             <div class="text-3xl font-black text-white mb-4" id="load-pct">0%</div>
             <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
@@ -423,20 +450,20 @@
             <!-- VARIO 160 DASHBOARD VIEW -->
             <div class="w-full honda-dash-shell mb-8">
                 <!-- TOP INDICATORS -->
-                <div class="flex justify-between px-10 mb-2 text-[22px]">
-                    <i id="ind-left" class="ph-fill ph-arrow-left text-green-500 indicator-icon"></i>
-                    <i id="ind-key" class="ph-fill ph-key text-yellow-500 indicator-icon on"></i>
-                    <i class="ph-fill ph-headlights text-blue-500 indicator-icon on"></i>
-                    <i id="ind-engine" class="ph-fill ph-engine text-orange-400 indicator-icon"></i>
-                    <i id="ind-battery" class="ph-fill ph-battery-warning text-red-500 indicator-icon"></i>
-                    <i id="ind-right" class="ph-fill ph-arrow-right text-green-500 indicator-icon"></i>
+                <div class="flex justify-between px-8 mb-2 text-[19px]">
+                    <div class="indicator-housing"><i id="ind-left" class="ph-fill ph-arrow-left text-green-500 indicator-icon"></i></div>
+                    <div class="indicator-housing"><i id="ind-key" class="ph-fill ph-key text-yellow-500 indicator-icon on"></i></div>
+                    <div class="indicator-housing"><i class="ph-fill ph-headlights text-blue-500 indicator-icon on"></i></div>
+                    <div class="indicator-housing"><i id="ind-engine" class="ph-fill ph-engine text-orange-400 indicator-icon"></i></div>
+                    <div class="indicator-housing"><i id="ind-battery" class="ph-fill ph-battery-warning text-red-500 indicator-icon"></i></div>
+                    <div class="indicator-housing"><i id="ind-right" class="ph-fill ph-arrow-right text-green-500 indicator-icon"></i></div>
                 </div>
 
                 <!-- LCD SCREEN -->
                 <div class="lcd-screen flex flex-col font-digital relative">
                     <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_3px] pointer-events-none"></div>
 
-                    <div class="flex justify-between items-start z-10">
+                    <div class="flex justify-between items-center z-10">
                         <!-- Kiri: Bensin -->
                         <div class="flex flex-col items-center justify-between h-[75px]">
                             <span class="text-[10px] lcd-text font-bold leading-none -ml-4">F</span>
@@ -456,47 +483,40 @@
                             </div>
                         </div>
 
-                        <!-- Kanan: Jam & Odo -->
-                        <div class="flex flex-col items-end text-right h-full justify-between">
-                            <div class="flex items-center gap-1 mb-4">
-                                <i class="ph ph-clock lcd-text text-[10px]"></i>
-                                <span id="dash-clock" class="text-sm lcd-text tracking-widest font-bold">--:--</span>
+                        <!-- Tengah: Speedometer 7-segment (asli kayak Vario 160) -->
+                        <div class="flex items-end gap-1.5">
+                            <div id="speed-seg" class="seg-display lcd-text" style="font-size: clamp(2.1rem, 12vw, 5rem);"></div>
+                            <span class="text-xs md:text-sm lcd-text font-bold italic mb-1 md:mb-2">km/h</span>
+                        </div>
+
+                        <!-- Kanan: Jam & Odo, 7-segment -->
+                        <div class="flex flex-col items-end text-right h-[75px] justify-between">
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-clock lcd-text text-[9px]"></i>
+                                <div id="clock-seg" class="seg-display lcd-text" style="font-size: 13px;"></div>
                             </div>
                             <div class="flex flex-col items-end">
-                                <span class="text-[8px] lcd-text uppercase tracking-widest font-bold">TOTAL</span>
+                                <span class="text-[7px] lcd-text uppercase tracking-widest font-bold opacity-70">Total Trip</span>
                                 <div class="flex items-end gap-1">
-                                    <span class="text-lg lcd-text tracking-wider font-bold">8888</span>
-                                    <span class="text-[10px] lcd-text font-bold mb-[2px]">km</span>
+                                    <div id="odo-seg" class="seg-display lcd-text" style="font-size: 12px;"></div>
+                                    <span class="text-[9px] lcd-text font-bold mb-[1px]">km</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Hero: Gauge Speedometer Melingkar -->
-                    <div class="flex justify-center -mt-3 mb-1 z-10 relative">
-                        <div class="speedo-wrap">
-                            <div class="speedo-ring-track"></div>
-                            <div class="speedo-ring-ticks-minor"></div>
-                            <div class="speedo-ring-ticks-major"></div>
-                            <div id="speedo-ring-progress" class="speedo-ring-progress" style="--ring-progress: 0%"></div>
-                            <div class="speedo-center">
-                                <span id="speed-text" class="lcd-text font-black italic leading-none" style="font-size: clamp(2.4rem, 11vw, 3.6rem);">0</span>
-                                <span class="text-[10px] lcd-text font-bold italic opacity-70 tracking-widest -mt-0.5">KM/H</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bawah: Bar km/L -->
-                    <div class="pt-1 border-t border-white/20 relative z-10 w-full flex items-center gap-2">
+                    <!-- Bawah: Bar Grafik km/L (kayak dash asli, bukan slider) -->
+                    <div class="mt-3 pt-1 border-t border-white/20 relative z-10 w-full flex items-center gap-2">
                         <span class="text-[9px] lcd-text font-bold italic">km/L</span>
-                        <div class="flex-1 relative h-3 flex items-center justify-between px-1">
-                            <span class="text-[8px] lcd-text">0</span>
-                            <span class="text-[8px] lcd-text">20</span>
-                            <span class="text-[8px] lcd-text">40</span>
-                            <span class="text-[8px] lcd-text">60</span>
-                            <span class="text-[8px] lcd-text">80</span>
-                            <div class="absolute top-1/2 -translate-y-1/2 left-0 h-[2px] bg-white/20 w-full z-0 border-b border-white/10"></div>
-                            <div id="kml-bar" class="absolute top-1/2 -translate-y-1/2 left-6 h-[4px] bg-[#e5e7eb] w-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)] transition-all duration-100 origin-left"></div>
+                        <div class="flex-1">
+                            <div class="flex items-end gap-[2px] h-3" id="kml-bars"></div>
+                            <div class="flex justify-between mt-0.5">
+                                <span class="text-[7px] lcd-text opacity-50">0</span>
+                                <span class="text-[7px] lcd-text opacity-50">20</span>
+                                <span class="text-[7px] lcd-text opacity-50">40</span>
+                                <span class="text-[7px] lcd-text opacity-50">60</span>
+                                <span class="text-[7px] lcd-text opacity-50">80</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -507,7 +527,7 @@
                 </div>
             </div>
 
-            <button id="btn-throttle" class="w-full btn-neon text-red-500 hover:text-white font-bold py-5 px-8 rounded-2xl flex flex-col items-center gap-1 text-sm tracking-widest uppercase cursor-pointer select-none">
+            <button id="btn-throttle" class="w-full btn-neon breathe-idle text-red-500 hover:text-white font-bold py-5 px-8 rounded-2xl flex flex-col items-center gap-1 text-sm tracking-widest uppercase cursor-pointer select-none">
                 <i class="ph ph-hand-grabbing text-3xl mb-1 animate-bounce"></i>
                 <span>GASS POL! (TAP DISINI)</span>
                 <span class="text-[10px] text-neutral-500 font-light normal-case">Ketuk super cepat sampai top speed</span>
@@ -675,7 +695,7 @@
             <div class="absolute top-0 left-0 w-1.5 h-full bg-red-600"></div>
 
             <div class="flex items-center gap-3 border-b border-neutral-900 pb-6 mb-8 msg-anim relative">
-                <div class="w-10 h-10 rounded-xl bg-red-950/30 border border-red-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                <div class="w-10 h-10 rounded-xl bg-red-950/30 border border-red-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)] float-idle">
                     <i class="ph-fill ph-gift text-2xl text-red-500"></i>
                 </div>
                 <h3 class="text-xl md:text-2xl font-black text-white uppercase tracking-wider font-digital">
@@ -719,6 +739,24 @@
             if (navigator.vibrate) {
                 try { navigator.vibrate(pattern); } catch (e) {}
             }
+        }
+
+        // ================= DESKTOP CURSOR GLOW (progressive enhancement, no-op on touch) =================
+        if (!reducedMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            const cursorGlow = document.getElementById('cursor-glow');
+            let glowX = 0, glowY = 0, glowRafPending = false;
+            document.addEventListener('mousemove', (e) => {
+                glowX = e.clientX; glowY = e.clientY;
+                if (!glowRafPending) {
+                    glowRafPending = true;
+                    requestAnimationFrame(() => {
+                        cursorGlow.style.left = glowX + 'px';
+                        cursorGlow.style.top = glowY + 'px';
+                        cursorGlow.style.opacity = '1';
+                        glowRafPending = false;
+                    });
+                }
+            }, { passive: true });
         }
 
         // ================= TOAST (milestone + success summary) =================
@@ -789,6 +827,7 @@
             let pct = Math.floor((loadedCount / totalAssets) * 100);
             document.getElementById('load-pct').innerText = pct + "%";
             document.getElementById('load-bar').style.width = pct + "%";
+            document.getElementById('preload-ring').style.setProperty('--ring-progress', pct + '%');
 
             if (loadedCount >= totalAssets) {
                 clearInterval(loaderMsgInterval);
@@ -856,17 +895,69 @@
         // ================= ROUTING & ANIMATIONS ENGINE =================
         function switchPage(fadeOutId, fadeInId, initFunction) {
             gsap.to(fadeOutId, {
-                autoAlpha: 0, y: -30, duration: 0.6, ease: "power2.in",
+                autoAlpha: 0, y: -30, scale: 0.98, duration: 0.55, ease: "power2.in",
                 onComplete: () => {
-                    gsap.set(fadeOutId, { y: 0 });
+                    gsap.set(fadeOutId, { y: 0, scale: 1 });
                     document.querySelector(fadeInId).scrollTop = 0;
                     gsap.fromTo(fadeInId, 
-                        { autoAlpha: 0, y: 30 },
-                        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }
+                        { autoAlpha: 0, y: 30, scale: 0.97 },
+                        { autoAlpha: 1, y: 0, scale: 1, duration: 0.85, ease: "back.out(1.4)" }
                     );
                     if (initFunction) initFunction();
                 }
             });
+        }
+
+        // ================= 7-SEGMENT LCD DISPLAY ENGINE (authentic Vario 160 dash look) =================
+        const SEG_MAP = {
+            '0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc',
+            '5': 'afgcd', '6': 'afgecd', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg',
+            ' ': '', '-': 'g'
+        };
+        function makeSegDigit() {
+            const d = document.createElement('div');
+            d.className = 'seg-digit';
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g'].forEach(s => {
+                const seg = document.createElement('div');
+                seg.className = 'seg seg-' + s;
+                d.appendChild(seg);
+            });
+            return d;
+        }
+        function makeSegColon() {
+            const c = document.createElement('div');
+            c.className = 'seg-colon';
+            c.innerHTML = '<div class="dot top"></div><div class="dot bottom"></div>';
+            return c;
+        }
+        function setSegDigit(el, char) {
+            const segs = SEG_MAP[char] !== undefined ? SEG_MAP[char] : '';
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g'].forEach(s => {
+                el.querySelector('.seg-' + s).classList.toggle('on', segs.includes(s));
+            });
+        }
+        // Builds the digit/colon DOM once; returns {digitEls, colonEls} for fast updates later
+        function buildSegDisplay(container, pattern) {
+            container.innerHTML = '';
+            const digitEls = [];
+            for (const ch of pattern) {
+                if (ch === ':') {
+                    const colon = makeSegColon();
+                    colon.querySelectorAll('.dot').forEach(dot => dot.classList.add('on'));
+                    container.appendChild(colon);
+                } else {
+                    const d = makeSegDigit();
+                    container.appendChild(d);
+                    setSegDigit(d, ch);
+                    digitEls.push(d);
+                }
+            }
+            return digitEls;
+        }
+        // Updates an already-built display in place (keeps DOM nodes, just flips segments) - used every tick so it stays cheap
+        function updateSegDisplay(digitEls, valueStr) {
+            const padded = valueStr.padStart(digitEls.length, ' ').slice(-digitEls.length);
+            for (let i = 0; i < digitEls.length; i++) setSegDigit(digitEls[i], padded[i]);
         }
 
         // ================= GAME LOGIC & DASHBOARD SINKRON =================
@@ -882,7 +973,19 @@
         const milestoneMessages = { 50: "GASS TERUS! 🔥", 100: "SETENGAH JALAN! 💨", 150: "DIKIT LAGI!! 🚨" };
         let shownMilestones = new Set();
 
-        const speedText = document.getElementById('speed-text');
+        const speedSegEls = buildSegDisplay(document.getElementById('speed-seg'), '000');
+        const clockSegEls = buildSegDisplay(document.getElementById('clock-seg'), '00:00');
+        buildSegDisplay(document.getElementById('odo-seg'), '8888');
+        const KML_BAR_COUNT = 22;
+        const kmlBarEls = [];
+        const kmlBarsContainer = document.getElementById('kml-bars');
+        for (let i = 0; i < KML_BAR_COUNT; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'kml-seg-bar';
+            kmlBarsContainer.appendChild(bar);
+            kmlBarEls.push(bar);
+        }
+        let lastDisplayedSpeed = -1;
         const throttleBtn = document.getElementById('btn-throttle');
         const speedGlow = document.getElementById('speed-glow');
         const sfxRev = document.getElementById('sfx-rev');
@@ -895,8 +998,7 @@
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
-            const el = document.getElementById('dash-clock');
-            if (el) el.innerText = `${h}:${m}`;
+            updateSegDisplay(clockSegEls, `${h}${m}`);
         }
         updateClock();
         setInterval(updateClock, 15000);
@@ -938,17 +1040,24 @@
         }
 
         function updateDashboard() {
-            speedText.innerText = Math.floor(speed);
+            const displaySpeed = Math.floor(speed);
+            const speedSegContainer = document.getElementById('speed-seg');
+            if (displaySpeed !== lastDisplayedSpeed) {
+                lastDisplayedSpeed = displaySpeed;
+                updateSegDisplay(speedSegEls, String(displaySpeed));
+                speedSegContainer.classList.remove('seg-punch');
+                void speedSegContainer.offsetWidth; // force reflow so the animation can restart
+                speedSegContainer.classList.add('seg-punch');
+            }
+            speedSegContainer.classList.toggle('seg-display-danger', speed >= 165 && !gameFinished);
 
-            const ringPct = Math.min(100, (speed / maxSpeed) * 100);
-            const ringEl = document.getElementById('speedo-ring-progress');
-            ringEl.style.setProperty('--ring-progress', ringPct + '%');
-            ringEl.classList.toggle('speedo-ring-danger', speed >= 165 && !gameFinished);
-
-            // Instant Fuel Consumption Bar
-            const kmlBar = document.getElementById('kml-bar');
-            const kmlPercent = 100 - ((speed / maxSpeed) * 90); 
-            kmlBar.style.width = `${Math.max(10, kmlPercent)}%`;
+            // Bar grafik km/L (bersegmen, kayak dash asli - bukan slider polos)
+            const kmlPercent = 100 - ((speed / maxSpeed) * 90);
+            const kmlClamped = Math.max(10, kmlPercent);
+            const activeBars = Math.round((kmlClamped / 100) * KML_BAR_COUNT);
+            for (let i = 0; i < KML_BAR_COUNT; i++) {
+                kmlBarEls[i].classList.toggle('active', i < activeBars);
+            }
 
             // Lebar Realistis Indikator Bensin Vario 160 (Makin cepat makin abis)
             const activeSegments = Math.max(1, Math.ceil((fuelLevel / 100) * 8));
@@ -1207,7 +1316,7 @@
 
             switchPage("#page-1", "#page-game", () => {
                 gameFinished = false; speed = 0; fuelLevel = 100;
-                gameStartTime = null; shownMilestones.clear();
+                gameStartTime = null; shownMilestones.clear(); lastDisplayedSpeed = -1;
                 updateBestTimeLabel();
                 updateDashboard(); startSpeedDecay();
                 gsap.fromTo(".game-anim", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
