@@ -9,7 +9,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Happy Level-Up Day Ali! 🏁</title>
+    <title>Happy Level-Up Day! 🏁</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,10 +91,8 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         .polaroid {
             background: linear-gradient(165deg, #141414 0%, #0b0b0b 100%);
@@ -248,9 +246,17 @@
             max-height: 85dvh;
             overflow-y: auto;
         }
-        .msg-card {
+        .msg-card-frame {
             max-height: 80vh;
             max-height: 80dvh;
+            background: rgba(13,13,13,0.95);
+            border: 1px solid #262626;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-card-scroll {
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
@@ -654,7 +660,7 @@
 
             <div class="mt-auto pb-16 text-center gallery-anim">
                 <button id="btn-next-msg" class="btn-neon text-gray-300 hover:text-white py-4 px-10 rounded-full inline-flex items-center gap-3 cursor-pointer tracking-wider text-sm font-semibold uppercase">
-                    <span>Buka Pesan Rahasia</span>
+                    <span>Buka Transmisi Rahasia</span>
                     <i class="ph ph-caret-right text-lg"></i>
                 </button>
             </div>
@@ -689,47 +695,50 @@
     <div id="page-3" class="page justify-start items-center p-4 md:p-8 z-30 bg-transparent overflow-y-auto relative">
         <div class="fixed inset-0 grid-bg pointer-events-none"></div>
         <canvas id="fireworks-canvas" class="fixed inset-0 pointer-events-none z-10 bg-black/30"></canvas>
-        <div class="max-w-2xl w-full bg-[#0d0d0d]/95 border border-neutral-800 rounded-3xl p-6 md:p-10 my-16 relative msg-card msg-anim shadow-[0_0_50px_rgba(239,68,68,0.1)] z-20">
+        <div class="max-w-2xl w-full relative msg-card-frame msg-anim shadow-[0_0_50px_rgba(239,68,68,0.1)] z-20 mt-16 mb-10">
             <span class="hud-corner hud-corner-tl hud-corners-active"></span>
             <span class="hud-corner hud-corner-tr hud-corners-active"></span>
             <span class="hud-corner hud-corner-bl hud-corners-active"></span>
             <span class="hud-corner hud-corner-br hud-corners-active"></span>
-            <i class="ph ph-envelope-simple-open absolute bottom-2 right-2 text-7xl text-neutral-950/50 pointer-events-none"></i>
-            <div class="absolute top-0 left-0 w-1.5 h-full bg-red-600 rounded-l-3xl"></div>
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-red-600 z-10"></div>
 
-            <div class="flex items-center gap-3 border-b border-neutral-900 pb-6 mb-8 msg-anim relative">
-                <div class="w-10 h-10 rounded-xl bg-red-950/30 border border-red-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)] float-idle">
-                    <i class="ph-fill ph-gift text-2xl text-red-500"></i>
+            <div class="msg-card-scroll p-6 md:p-10 relative">
+                <i class="ph ph-envelope-simple-open absolute bottom-2 right-2 text-7xl text-neutral-950/50 pointer-events-none"></i>
+
+                <div class="flex items-center gap-3 border-b border-neutral-900 pb-6 mb-8 msg-anim relative">
+                    <div class="w-10 h-10 rounded-xl bg-red-950/30 border border-red-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)] float-idle">
+                        <i class="ph-fill ph-gift text-2xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-black text-white uppercase tracking-wider font-digital">
+                        Incoming <span class="text-red-500">Transmission</span>
+                    </h3>
                 </div>
-                <h3 class="text-xl md:text-2xl font-black text-white uppercase tracking-wider font-digital">
-                    Message
-                </h3>
-            </div>
-            
-            <div class="space-y-6 text-gray-300 font-light leading-relaxed msg-anim relative z-10 text-sm md:text-base">
-                <p>
-                    <strong class="text-white font-black text-lg block mb-2">Selamat ulang tahun ya, sayang!</strong> Udah nambah umur nih, semoga rezekinya makin lancar biar bisa jajanin aku terus (dan jajanin <i class="italic text-gray-400">sparepart</i> motor kamu yang nggak kelar-kelar itu).
-                </p>
-                <p>
-                    Semoga kamu sehat selalu, dilancarin semua urusannya, dan makin sayang sama aku. Walaupun kadang aku suka cemburu soalnya kamu lebih sering ngelus-ngelus tangki motor daripada ngelus kepala aku, tapi aku tau kok kamu sayang banget sama aku. <span class="italic text-gray-500">*Pede aja dulu yakan?*</span>
-                </p>
-                <p>
-                Pelan - pelan saja, sayang. aku tau targetmu banyak, jaga kesehatannya semoga sayang tulusmu ke aku membuat lancarnya rezekimu.    
-                </p>
-            </div>
+                
+                <div class="space-y-6 text-gray-300 font-light leading-relaxed msg-anim relative z-10 text-sm md:text-base">
+                    <p>
+                        <strong class="text-white font-black text-lg block mb-2">Selamat ulang tahun ya, sayang!</strong> Udah nambah umur nih, semoga rezekinya makin lancar biar bisa jajanin aku terus (dan jajanin <i class="italic text-gray-400">sparepart</i> motor kamu yang nggak kelar-kelar itu).
+                    </p>
+                    <p>
+                        Semoga kamu sehat selalu, dilancarin semua urusannya, dan makin sayang sama aku. Walaupun kadang aku suka cemburu soalnya kamu lebih sering ngelus-ngelus tangki motor daripada ngelus kepala aku, tapi aku tau kok kamu sayang banget sama aku. <span class="italic text-gray-500">*Pede aja dulu yakan?*</span>
+                    </p>
+                    <p>
+                        Tetep jadi pacar yang sabar, yang selalu siaga jadi supir aku ke mana-mana. Kurang-kurangin bawanya ngebut ya, ingat ada hati yang deg-degan nungguin kamu pulang dengan selamat di rumah. Pokoknya safety first!
+                    </p>
+                </div>
 
-            <div class="mt-10 pt-6 border-t border-neutral-900 flex items-center justify-between msg-anim relative z-10">
-                <p class="font-black text-white text-lg md:text-xl uppercase tracking-wider flex items-center gap-2">
-                    I love you <span class="text-red-600 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">3000!</span>
-                    <i class="ph-fill ph-flag-checkered text-xl text-red-500 animate-pulse"></i>
-                </p>
-                <i class="ph-fill ph-heart text-3xl text-red-500 heartbeat-icon drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]"></i>
-            </div>
-            
-            <div class="mt-8 text-center msg-anim z-20 relative">
-                 <button id="btn-replay" class="text-xs text-neutral-500 hover:text-red-400 tracking-widest uppercase transition-colors flex items-center justify-center gap-2 w-full py-2 cursor-pointer">
-                    <i class="ph ph-arrows-clockwise text-lg"></i> Replay
+                <div class="mt-10 pt-6 border-t border-neutral-900 flex items-center justify-between msg-anim relative z-10">
+                    <p class="font-black text-white text-lg md:text-xl uppercase tracking-wider flex items-center gap-2">
+                        I love you <span class="text-red-600 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">3000!</span>
+                        <i class="ph-fill ph-flag-checkered text-xl text-red-500 animate-pulse"></i>
+                    </p>
+                    <i class="ph-fill ph-heart text-3xl text-red-500 heartbeat-icon drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]"></i>
+                </div>
+                
+                <div class="mt-8 text-center msg-anim z-20 relative">
+                     <button id="btn-replay" class="text-xs text-neutral-500 hover:text-red-400 tracking-widest uppercase transition-colors flex items-center justify-center gap-2 w-full py-2 cursor-pointer">
+                    <i class="ph ph-arrows-clockwise text-lg"></i> Replay System
                 </button>
+            </div>
             </div>
         </div>
     </div>
@@ -741,6 +750,17 @@
         function vibrate(pattern) {
             if (navigator.vibrate) {
                 try { navigator.vibrate(pattern); } catch (e) {}
+            }
+        }
+
+        // Fullscreen on mobile so the browser chrome gets out of the way - must run inside a user gesture
+        function requestAppFullscreen() {
+            const el = document.documentElement;
+            const isMobileWidth = window.innerWidth < 900;
+            if (!isMobileWidth || document.fullscreenElement) return;
+            const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+            if (req) {
+                try { req.call(el).catch(() => {}); } catch (e) {}
             }
         }
 
@@ -1310,6 +1330,7 @@
 
         // ================= ROUTING CLICK CONTROLLERS =================
         document.getElementById('btn-start').addEventListener('click', () => {
+            requestAppFullscreen();
             bgm.play().then(() => bgm.pause()).catch(() => {});
             sfxRev.play().then(() => sfxRev.pause()).catch(() => {});
             sfxFireworks.play().then(() => sfxFireworks.pause()).catch(() => {});
@@ -1382,7 +1403,7 @@
         const emberColors = ['#ef4444', '#fb923c', '#facc15'];
 
         function resizeFireworksCanvas() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 1.5); // capped: full DPR on canvas particle fx is a major mobile GPU cost for little visible gain
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.3); // capped: full DPR on canvas particle fx is a major mobile GPU cost for little visible gain
             fwCanvas.width = window.innerWidth * dpr;
             fwCanvas.height = window.innerHeight * dpr;
             fwCanvas.style.width = window.innerWidth + 'px';
@@ -1457,8 +1478,8 @@
         }
 
         function spawnCluster(x, y) {
-            if (particles.length > 480) return; // defensive cap for low-end devices
-            const count = reducedMotion ? 14 : 46;
+            if (particles.length > 380) return; // defensive cap for low-end devices
+            const count = reducedMotion ? 12 : 36;
             for (let i = 0; i < count; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const velocity = (Math.random() * 320 + 60) / 45; // scaled to per-frame px
@@ -1469,10 +1490,10 @@
                     vy: Math.sin(angle) * velocity,
                     gravity: 0.11,
                     life: 1,
-                    decay: Math.random() * 0.017 + 0.01,
+                    decay: Math.random() * 0.019 + 0.011,
                     size: Math.random() * 5.5 + 3,
                     color: fwColors[Math.floor(Math.random() * fwColors.length)],
-                    shape: Math.random() < 0.32 ? 'star' : 'dot',
+                    shape: Math.random() < 0.22 ? 'star' : 'dot',
                     rotation: 0,
                     spin: (Math.random() - 0.5) * 0.35
                 });
@@ -1483,7 +1504,7 @@
         // Slow-rising warm embers drifting up from the bottom - ambient "engine spark" layer matching the Vario/racing theme
         let emberCount = 0;
         function spawnEmber() {
-            if (emberCount > 26) return;
+            if (emberCount > 18) return;
             emberCount++;
             particles.push({
                 kind: 'ember',
@@ -1496,12 +1517,12 @@
                 swayPhase: Math.random() * Math.PI * 2,
                 swayAmp: Math.random() * 0.4 + 0.15,
                 life: 1,
-                maxAlpha: Math.random() * 0.35 + 0.35,
+                maxAlpha: Math.random() * 0.35 + 0.4,
                 decay: Math.random() * 0.0035 + 0.0026,
-                size: Math.random() * 1.7 + 0.9,
+                size: Math.random() * 2.1 + 1.2,
                 color: emberColors[Math.floor(Math.random() * emberColors.length)],
                 shape: 'dot',
-                glow: 5
+                glow: 0
             });
             ensureParticleLoopRunning();
         }
@@ -1538,9 +1559,13 @@
             setTimeout(triggerMultipleBursts, reducedMotion ? (Math.random() * 2200 + 3800) : (Math.random() * 1000 + 1100));
         }
 
-        // Tap the message background (not the letter card) for a bonus burst
+        // Tap the message background (not the letter card) for a bonus burst - cooldown so rapid tapping can't pile up particles
+        let lastBonusBurstTime = 0;
         document.getElementById('page-3').addEventListener('click', (e) => {
             if (e.target.id === 'page-3' || e.target.id === 'fireworks-canvas') {
+                const now = Date.now();
+                if (now - lastBonusBurstTime < 500) return;
+                lastBonusBurstTime = now;
                 spawnCluster(e.clientX, e.clientY);
                 vibrate(10);
             }
